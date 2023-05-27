@@ -28,6 +28,8 @@ class BimaruState:
         BimaruState.state_id += 1
 
     def __lt__(self, other):
+        """ Este método é utilizado em caso de empate na gestão da lista
+de abertos nas procuras informadas. """
         return self.id < other.id
     
 
@@ -37,15 +39,17 @@ class BimaruState:
 class Board:
     """Representação interna de um tabuleiro de Bimaru."""
 
-    def __init__(self, grid):
+    def __init__(self, grid, ROW_counts, COL_counts):
         self.grid = grid
+        self.ROW_counts = ROW_counts
+        self.COL_counts = COL_counts
 
     def get_value(self, row: int, col: int) -> str:
         """Devolve o valor na respetiva posição do tabuleiro."""
         
         return self.grid[row][col]
 
-    def adjacent_vertical_values(self, row: int, col: int) -> (str, str): #check if values are within bounds
+    def adjacent_vertical_values(self, row: int, col: int) -> (str, str):
         """Devolve os valores imediatamente acima e abaixo,
         respectivamente."""
 
@@ -77,11 +81,11 @@ class Board:
 
         from sys import stdin
         
-        ROW = stdin.readline().split()     #lè a 1ª linha do ficheiro
-        COLUMN = stdin.readline().split()  #lè a 2ª linha do ficheiro
+        ROW = stdin.readline().split()      #lè a 1ª linha do ficheiro
+        COL = stdin.readline().split()      #lè a 2ª linha do ficheiro
 
-        ROW_counts = [int(ship_count) for ship_count in ROW[1:]] #lè ROW desde o 2º elemento até ao último na forma int
-        COLUMN_counts = [int(ship_count) for ship_count in COLUMN[1:]]
+        ROW_counts = [int(ship_count) for ship_count in ROW[1:]]    #lè ROW desde o 2º elemento até ao último na forma int
+        COL_counts = [int(ship_count) for ship_count in COL[1:]]
 
         grid = [['.' for _ in range(10)] for _ in range(10)]   #cria uma matriz 10x10 vazia
 
@@ -94,37 +98,7 @@ class Board:
             ship_type = hint_line[3]
             grid[row][col] = ship_type
 
-        return Board(grid)
-
-
-        #i = 0
-        #lines = []
-        #Row = []
-        #Column = []
-        #Hints = []
-        #for line in stdin:
-        #    line = line.split()
-        #    lines.append(line)
-        #    j = 0
-        #    for pos in line:
-        #        if i == 0: #guardar a ROW
-        #            if j != 0:
-        #                Row.append(pos)
-        #
-        #        elif i == 1: #guardar a COLUMN
-        #            if j != 0:
-        #                Column.append(pos)
-        #
-        #        elif i == 2: #guardar nº hints
-        #            Nhints = pos
-        #
-        #        else:
-        #            Hints.append(pos)
-        #
-        #
-        #        j = j + 1
-        #            
-        #    i = i + 1
+        return Board(grid, ROW_counts, COL_counts)
 
     def w(self, row: int, col: int): #neste momento a água está como "w". No fim tem de estar como "."
         self.grid[row][col] = "w"
@@ -141,7 +115,7 @@ class Board:
     def b(self, row: int, col: int):
         self.grid[row][col] = "b"
 
-    def t(self, row: int, col: int):
+    def l(self, row: int, col: int):
         self.grid[row][col] = "l"
 
     def r(self, row: int, col: int):
@@ -160,13 +134,42 @@ class Board:
 class Bimaru(Problem):
     def __init__(self, board: Board):
         """O construtor especifica o estado inicial."""
-        self.initial_state = BimaruState(board)
+        self.initial = BimaruState(board)
 
     def actions(self, state: BimaruState):
         """Retorna uma lista de ações que podem ser executadas a
         partir do estado passado como argumento."""
+
+        actions = [] #lista de ações
+        board = state.board
+
+        #método para meter água se ROW_counts ou COL_counts estiver a 0
+
+        for row in range(10):
+            for col in range(10):
+                if board.get_value(row, col) == '.':    #só verifica as contagens se a célula estiver vazia
+                    if board.ROW_counts[row] == 0 or board.COL_counts[col] == 0:
+                        actions.append((row, col, 'w'))
+
         
-        return ["place_water"]
+        # Meter água à volta dos círculos
+
+        for row in range(10):
+            for col in range(10):
+                if board.get_value(row, col) == "C" or board.get_value(row, col) == "c":
+                    if row == 0 and col == 0:            #upper left
+                        board.grid[row+1][col] = "w"
+                        board.grid[row][col+1] = "w"
+                        board.grid[row+1][col+1] = "w"
+
+                    elif row == 0 and col == 9:            #upper right
+                        board.grid[row+1][col] = "w"
+                        board.grid[row][col+1] = "w"
+                        board.grid[row+1][col+1] = "w"
+
+        
+        
+        return actions
 
     def result(self, state: BimaruState, action):
         """Retorna o estado resultante de executar a 'action' sobre
@@ -175,9 +178,20 @@ class Bimaru(Problem):
         self.actions(state)."""
 
         row, col, ship_type = action
+        board = state.board
+
         grid_copy = state.board.grid.copy()
         grid_copy[row][col] = ship_type
-        new_state = BimaruState(Board(grid_copy))
+
+        ROW_counts_copy = board.ROW_counts.copy()
+        COL_counts_copy = board.COL_counts.copy()
+
+        if ship_type != 'w':                #ROW_counts e COL_counts é o nº de navios que faltam colunar na linha/coluna
+            ROW_counts_copy[row] -= 1
+            COL_counts_copy[col] -= 1
+
+        new_board = Board(grid_copy, ROW_counts_copy, COL_counts_copy)
+        new_state = BimaruState(new_board)
 
         return new_state
 
@@ -185,16 +199,21 @@ class Bimaru(Problem):
         """Retorna True se e só se o estado passado como argumento é
         um estado objetivo. Deve verificar se todas as posições do tabuleiro
         estão preenchidas de acordo com as regras do problema."""
-        # TODO
-        pass
+        
+        for row in state.board.grid:
+            for cell in row:
+                if cell == ".":
+                    return False     #se encontrar pelo menos 1 célula vazia, então ainda não acabou
+                
+        return True
 
-    def h(self, node: Node):
+    def h(self, node: Node):    #nº de navios que falta serem colocados (é admissível)
         """Função heuristica utilizada para a procura A*."""
-        # TODO
-        pass
+        
+        state = node.state
+        count = sum(state.board.ROW_counts) + sum(state.board.COL_counts)
 
-    # TODO: outros metodos da classe
-
+        return count
 
 if __name__ == "__main__":
 
@@ -203,13 +222,9 @@ if __name__ == "__main__":
     # Criar uma instância de Bimaru:
     problem = Bimaru(board)
 
-    # Criar um estado com a configuração inicial:
-    initial_state = BimaruState(board)
+    # Obter o nó solução usando a procura em profundidade:
+    goal_node = depth_first_tree_search(problem)
 
-    # Mostrar valor na posição (3, 3):
-    print(initial_state.board.get_value(0, 0))
-
-    # Realizar acção de inserir o valor w (água) na posição da linha 3 e coluna 3
-    result_state = problem.result(initial_state, (3, 3, "w"))
-
-    board.print()
+    # Verificar se foi atingida a solução
+    print("Is goal?", problem.goal_test(goal_node.state))
+    print("Solution:\n", goal_node.state.board.print(), sep="")
