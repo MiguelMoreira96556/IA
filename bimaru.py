@@ -72,7 +72,8 @@ class Board:
         elif col == 9:
             return (self.grid[row][col-1], "None")
         
-        return self.grid[row][col-1], self.grid[row][col+1]
+        else:
+            return self.grid[row][col-1], self.grid[row][col+1]
 
     @staticmethod
     def parse_instance():
@@ -155,7 +156,7 @@ class Bimaru(Problem):
 
         for row in range(10):
             for col in range(10):
-                if board.get_value(row, col) == "C" or board.get_value(row, col) == "c":
+                if board.get_value(row, col).lower() == "c":            # lower para ter em conta os círculos já lá postos (maiúsculos)
                     if row == 0 and col == 0:                           # upper left
                         board.grid[row+1][col] = "w"
                         board.grid[row][col+1] = "w"
@@ -225,7 +226,19 @@ class Bimaru(Problem):
             if board.ROW_counts[row] == dot_counter:    # nº de "." igual à contagem da ROW
                 for col in range(10):
                     if board.get_value(row, col) == ".":
-                        board.grid[row][col] = "s"      # navio não identificado ainda
+                        left, right = board.adjacent_horizontal_values(row, col)
+                        above, below = board.adjacent_vertical_values(row, col)
+                        left = left.lower()
+                        right = right.lower()
+                        above = above.lower()
+                        below = below.lower()
+
+                        if left == "w" and right == "w" and above == "w" and below == "w":
+                            board.grid[row][col] = "c"
+
+                        if board.ROW_counts[row] >= 4:
+                            
+
 
         # Meter barcos se o nº de células vazias for igual a COL_counts
 
