@@ -140,34 +140,111 @@ class Bimaru(Problem):
         """Retorna uma lista de ações que podem ser executadas a
         partir do estado passado como argumento."""
 
-        actions = [] #lista de ações
+        actions = []    #lista de ações
         board = state.board
 
-        #método para meter água se ROW_counts ou COL_counts estiver a 0
+        # Meter água se ROW_counts ou COL_counts estiver a 0
 
         for row in range(10):
             for col in range(10):
-                if board.get_value(row, col) == '.':    #só verifica as contagens se a célula estiver vazia
+                if board.get_value(row, col) == '.':    #só verifica as contagens se ainda houver células vazias
                     if board.ROW_counts[row] == 0 or board.COL_counts[col] == 0:
                         actions.append((row, col, 'w'))
-
         
         # Meter água à volta dos círculos
 
         for row in range(10):
             for col in range(10):
                 if board.get_value(row, col) == "C" or board.get_value(row, col) == "c":
-                    if row == 0 and col == 0:            #upper left
+                    if row == 0 and col == 0:                           # upper left
                         board.grid[row+1][col] = "w"
                         board.grid[row][col+1] = "w"
                         board.grid[row+1][col+1] = "w"
 
-                    elif row == 0 and col == 9:            #upper right
+                    elif row == 0 and col == 9:                         # upper right
                         board.grid[row+1][col] = "w"
+                        board.grid[row][col-1] = "w"
+                        board.grid[row+1][col-1] = "w"
+
+                    elif row == 9 and col == 0:                         # low left
+                        board.grid[row-1][col] = "w"
+                        board.grid[row][col+1] = "w"
+                        board.grid[row-1][col+1] = "w"
+
+                    elif row == 9 and col == 0:                         # low right
+                        board.grid[row-1][col] = "w"
+                        board.grid[row][col-1] = "w"
+                        board.grid[row-1][col-1] = "w"
+
+                    elif row == 0 and col != 0 and col != 9:            # top
+                        board.grid[row][col-1] = "w"
+                        board.grid[row][col+1] = "w"
+                        board.grid[row+1][col-1] = "w"
+                        board.grid[row+1][col] = "w"
+                        board.grid[row+1][col+1] = "w"
+
+                    elif row == 9 and col != 0 and col != 9:            # bottom
+                        board.grid[row][col-1] = "w"
+                        board.grid[row][col+1] = "w"
+                        board.grid[row-1][col-1] = "w"
+                        board.grid[row-1][col] = "w"
+                        board.grid[row-1][col+1] = "w"
+
+                    elif col == 0 and row != 0 and row != 9:            # left
+                        board.grid[row-1][col] = "w"
+                        board.grid[row+1][col] = "w"
+                        board.grid[row-1][col+1] = "w"
                         board.grid[row][col+1] = "w"
                         board.grid[row+1][col+1] = "w"
 
+                    elif col == 9 and row != 0 and row != 9:            # right
+                        board.grid[row-1][col] = "w"
+                        board.grid[row+1][col] = "w"
+                        board.grid[row-1][col-1] = "w"
+                        board.grid[row][col-1] = "w"
+                        board.grid[row+1][col-1] = "w"
+
+                    else:                                               # middle of the board
+                        board.grid[row-1][col-1] = "w"
+                        board.grid[row-1][col] = "w"
+                        board.grid[row-1][col+1] = "w"
+                        board.grid[row][col-1] = "w"
+                        board.grid[row][col+1] = "w"
+                        board.grid[row+1][col-1] = "w"
+                        board.grid[row+1][col] = "w"
+                        board.grid[row+1][col+1] = "w"
+                        
+        # Meter barcos se o nº de células vazias for igual a ROW_counts
+
+        for row in range(10):
+            dot_counter = 0
+            for col in range(10):
+                if board.get_value(row, col) == '.':    # só verifica as contagens se ainda houver células vazias
+                    dot_counter += 1
+            
+            if board.ROW_counts[row] == dot_counter:    # nº de "." igual à contagem da ROW
+                for col in range(10):
+                    if board.get_value(row, col) == ".":
+                        board.grid[row][col] = "s"      # navio não identificado ainda
+
+        # Meter barcos se o nº de células vazias for igual a COL_counts
+
+        for col in range(10):
+            dot_counter = 0
+            for row in range(10):
+                if board.get_value(row, col) == '.':    # só verifica as contagens se ainda houver células vazias
+                    dot_counter += 1
+            
+            if board.COL_counts[col] == dot_counter:    # nº de "." igual à contagem da ROW
+                for row in range(10):
+                    if board.get_value(row, col) == ".":
+                        board.grid[row][col] = "s"      # navio não identificado ainda
+
+        # Atualizar barcos não identificados "s"
         
+        
+
+        actions.append((row, col, 'w'))
         
         return actions
 
