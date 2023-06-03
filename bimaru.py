@@ -18,6 +18,15 @@ from search import (
     recursive_best_first_search,
 )
 
+def better_lower(value):     #esta função vai ignorar None, ao contrário da função lower
+
+    if value != None:
+        result = value.lower()
+
+    else:
+        result = value
+
+    return result
 
 class BimaruState:
     state_id = 0
@@ -54,10 +63,10 @@ class Board:
         respectivamente."""
 
         if row == 0:
-            return ("None", self.grid[row+1][col])
+            return (None, self.grid[row+1][col])
         
         elif row == 9:
-            return (self.grid[row-1][col], "None")
+            return (self.grid[row-1][col], None)
         
         else:
             return self.grid[row-1][col], self.grid[row+1][col]
@@ -67,13 +76,147 @@ class Board:
         respectivamente."""
 
         if col == 0:
-            return ("None", self.grid[row][col+1])
+            return (None, self.grid[row][col+1])
         
         elif col == 9:
-            return (self.grid[row][col-1], "None")
+            return (self.grid[row][col-1], None)
         
         else:
             return self.grid[row][col-1], self.grid[row][col+1]
+        
+    def adjacent_diagonal_values(self, row: int, col: int):
+
+        if self.is_upper_left(row, col):
+            return None, None, None, self.grid[row+1][col+1]
+        
+        elif self.is_upper_right(row, col):
+            return None, None, self.grid[row+1][col-1], None
+        
+        elif self.is_lower_left(row, col):
+            return None, self.grid[row-1][col+1], None, None
+        
+        elif self.is_lower_right(row, col):
+            return self.grid[row-1][col-1], None, None, None
+        
+        elif self.is_upper_middle(row, col):
+            return None, None, self.grid[row+1][col-1], self.grid[row+1][col+1]
+        
+        elif self.is_lower_middle(row, col):
+            return self.grid[row-1][col-1], self.grid[row-1][col+1], None, None
+        
+        elif self.is_left_middle(row, col):
+            return None, self.grid[row-1][col+1], None, self.grid[row+1][col+1]
+        
+        elif self.is_right_middle(row, col):
+            return self.grid[row-1][col-1], None, self.grid[row+1][col-1], None
+        
+        else:
+            return self.grid[row-1][col-1], self.grid[row-1][col+1], self.grid[row+1][col-1], self.grid[row+1][col+1]
+
+    def is_upper_left(self, row: int, col: int):
+        return row == 0 and col == 0
+    
+    def is_upper_right(self, row: int, col: int):
+        return row == 0 and col == 9
+    
+    def is_lower_left(self, row: int, col: int):
+        return row == 9 and col == 0
+    
+    def is_lower_right(self, row: int, col: int):
+        return row == 9 and col == 9
+
+    def is_upper_middle(self, row: int, col: int):
+        return row == 0 and col != 0 and col != 9
+    
+    def is_lower_middle(self, row: int, col: int):
+        return row == 9 and col != 0 and col != 9
+    
+    def is_left_middle(self, row: int, col: int):
+        return col == 0 and row != 0 and row != 9
+    
+    def is_right_middle(self, row: int, col: int):
+        return col == 9 and row != 0 and row != 9
+        
+    def is_water_around_boat1(self, row: int, col: int):
+        
+        above, below = self.adjacent_vertical_values(row, col)
+        left, right = self.adjacent_horizontal_values(row, col)
+        upper_left, upper_right, lower_left, lower_right = self.adjacent_diagonal_values(row, col)
+        
+        """left = better_lower(left)
+        right = better_lower(right)
+        above = better_lower(above)
+        below = better_lower(below)
+        upper_left = better_lower(upper_left)
+        upper_right = better_lower(upper_right)
+        lower_left = better_lower(lower_left)
+        lower_right = better_lower(lower_right)"""
+
+        if left == "." or right == "." or above == "." or below == "." or upper_left == "." or upper_right == "." or lower_left == "." or lower_right == ".":
+            return False
+        
+        return True
+
+    def water_around_boat1(self, row: int, col: int):
+
+        if board.is_upper_left(row, col):
+            self.grid[row+1][col] = "w"
+            self.grid[row][col+1] = "w"
+            self.grid[row+1][col+1] = "w"
+
+        elif board.is_upper_right(row, col):
+            self.grid[row+1][col] = "w"
+            self.grid[row][col-1] = "w"
+            self.grid[row+1][col-1] = "w"
+
+        elif board.is_lower_left(row, col):
+            self.grid[row-1][col] = "w"
+            self.grid[row][col+1] = "w"
+            self.grid[row-1][col+1] = "w"
+
+        elif board.is_lower_right(row, col):
+            self.grid[row-1][col] = "w"
+            self.grid[row][col-1] = "w"
+            self.grid[row-1][col-1] = "w"
+
+        elif self.is_upper_middle(row,col):
+            self.grid[row][col-1] = "w"
+            self.grid[row][col+1] = "w"
+            self.grid[row+1][col-1] = "w"
+            self.grid[row+1][col] = "w"
+            self.grid[row+1][col+1] = "w"
+
+        elif self.is_lower_middle(row,col):
+            self.grid[row][col-1] = "w"
+            self.grid[row][col+1] = "w"
+            self.grid[row-1][col-1] = "w"
+            self.grid[row-1][col] = "w"
+            self.grid[row-1][col+1] = "w"
+
+        elif self.is_left_middle(row,col):
+            self.grid[row-1][col] = "w"
+            self.grid[row+1][col] = "w"
+            self.grid[row-1][col+1] = "w"
+            self.grid[row][col+1] = "w"
+            self.grid[row+1][col+1] = "w"
+
+        elif self.is_right_middle(row,col):
+            self.grid[row-1][col] = "w"
+            self.grid[row+1][col] = "w"
+            self.grid[row-1][col-1] = "w"
+            self.grid[row][col-1] = "w"
+            self.grid[row+1][col-1] = "w"
+
+        else:
+            self.grid[row-1][col-1] = "w"
+            self.grid[row-1][col] = "w"
+            self.grid[row-1][col+1] = "w"
+            self.grid[row][col-1] = "w"
+            self.grid[row][col+1] = "w"
+            self.grid[row+1][col-1] = "w"
+            self.grid[row+1][col] = "w"
+            self.grid[row+1][col+1] = "w"
+
 
     @staticmethod
     def parse_instance():
@@ -101,7 +244,7 @@ class Board:
 
         return Board(grid, ROW_counts, COL_counts)
 
-    def w(self, row: int, col: int): #neste momento a água está como "w". No fim tem de estar como "."
+    def w(self, row: int, col: int):
         self.grid[row][col] = "w"
 
     def c(self, row: int, col: int):
@@ -141,82 +284,33 @@ class Bimaru(Problem):
         """Retorna uma lista de ações que podem ser executadas a
         partir do estado passado como argumento."""
 
-        actions = []    #lista de ações
+        result = []    #lista de ações
         board = state.board
 
-        # Meter água se ROW_counts ou COL_counts estiver a 0
+        # Meter água se ROW_counts estiver a 0
 
         for row in range(10):
-            for col in range(10):
-                if board.get_value(row, col) == '.':    #só verifica as contagens se ainda houver células vazias
-                    if board.ROW_counts[row] == 0 or board.COL_counts[col] == 0:
-                        actions.append((row, col, 'w'))
+            if board.ROW_counts[row] == 0:
+                result.append((row, "Put water in row"))
+
+        # Meter água se COL_counts estiver a 0
+
+        for col in range(10):
+            if board.COL_counts[col] == 0:
+                result.append((col, "Put water in column"))
         
-        # Meter água à volta dos círculos
+        # Meter água à volta dos boat1
 
         for row in range(10):
             for col in range(10):
-                if board.get_value(row, col).lower() == "c":            # lower para ter em conta os círculos já lá postos (maiúsculos)
-                    if row == 0 and col == 0:                           # upper left
-                        board.grid[row+1][col] = "w"
-                        board.grid[row][col+1] = "w"
-                        board.grid[row+1][col+1] = "w"
+                if better_lower(board.get_value(row, col)) == "c":
+                    if not board.is_water_around_boat1(row, col):
+                        result.append((row, col, "Water around boat1"))
 
-                    elif row == 0 and col == 9:                         # upper right
-                        board.grid[row+1][col] = "w"
-                        board.grid[row][col-1] = "w"
-                        board.grid[row+1][col-1] = "w"
-
-                    elif row == 9 and col == 0:                         # low left
-                        board.grid[row-1][col] = "w"
-                        board.grid[row][col+1] = "w"
-                        board.grid[row-1][col+1] = "w"
-
-                    elif row == 9 and col == 0:                         # low right
-                        board.grid[row-1][col] = "w"
-                        board.grid[row][col-1] = "w"
-                        board.grid[row-1][col-1] = "w"
-
-                    elif row == 0 and col != 0 and col != 9:            # top
-                        board.grid[row][col-1] = "w"
-                        board.grid[row][col+1] = "w"
-                        board.grid[row+1][col-1] = "w"
-                        board.grid[row+1][col] = "w"
-                        board.grid[row+1][col+1] = "w"
-
-                    elif row == 9 and col != 0 and col != 9:            # bottom
-                        board.grid[row][col-1] = "w"
-                        board.grid[row][col+1] = "w"
-                        board.grid[row-1][col-1] = "w"
-                        board.grid[row-1][col] = "w"
-                        board.grid[row-1][col+1] = "w"
-
-                    elif col == 0 and row != 0 and row != 9:            # left
-                        board.grid[row-1][col] = "w"
-                        board.grid[row+1][col] = "w"
-                        board.grid[row-1][col+1] = "w"
-                        board.grid[row][col+1] = "w"
-                        board.grid[row+1][col+1] = "w"
-
-                    elif col == 9 and row != 0 and row != 9:            # right
-                        board.grid[row-1][col] = "w"
-                        board.grid[row+1][col] = "w"
-                        board.grid[row-1][col-1] = "w"
-                        board.grid[row][col-1] = "w"
-                        board.grid[row+1][col-1] = "w"
-
-                    else:                                               # middle of the board
-                        board.grid[row-1][col-1] = "w"
-                        board.grid[row-1][col] = "w"
-                        board.grid[row-1][col+1] = "w"
-                        board.grid[row][col-1] = "w"
-                        board.grid[row][col+1] = "w"
-                        board.grid[row+1][col-1] = "w"
-                        board.grid[row+1][col] = "w"
-                        board.grid[row+1][col+1] = "w"
+        
                         
         # Meter barcos se o nº de células vazias for igual a ROW_counts
-
+        """
         for row in range(10):
             dot_counter = 0
             for col in range(10):
@@ -236,12 +330,12 @@ class Bimaru(Problem):
                         if left == "w" and right == "w" and above == "w" and below == "w":
                             board.grid[row][col] = "c"
 
-                        if board.ROW_counts[row] >= 4:
-                            
+                        #if board.ROW_counts[row] >= 4:
+                            """
 
 
         # Meter barcos se o nº de células vazias for igual a COL_counts
-
+        """
         for col in range(10):
             dot_counter = 0
             for row in range(10):
@@ -252,14 +346,10 @@ class Bimaru(Problem):
                 for row in range(10):
                     if board.get_value(row, col) == ".":
                         board.grid[row][col] = "s"      # navio não identificado ainda
-
+        """
         # Atualizar barcos não identificados "s"
         
-        
-
-        actions.append((row, col, 'w'))
-        
-        return actions
+        return result
 
     def result(self, state: BimaruState, action):
         """Retorna o estado resultante de executar a 'action' sobre
@@ -267,21 +357,46 @@ class Bimaru(Problem):
         das presentes na lista obtida pela execução de
         self.actions(state)."""
 
-        row, col, ship_type = action
         board = state.board
-
         grid_copy = state.board.grid.copy()
-        grid_copy[row][col] = ship_type
-
         ROW_counts_copy = board.ROW_counts.copy()
         COL_counts_copy = board.COL_counts.copy()
+        n_action_args = len(action)
 
-        if ship_type != 'w':                #ROW_counts e COL_counts é o nº de navios que faltam colunar na linha/coluna
-            ROW_counts_copy[row] -= 1
-            COL_counts_copy[col] -= 1
+        if n_action_args == 2:
+            first, second = action
+            if second == "Put water in row":
+                row = first
+                for col in range(10):
+                    if board.get_value(row, col) == '.':
+                        board.grid[row][col] = "w"
+
+            elif second == "Put water in column":
+                col = first
+                for row in range(10):
+                    if board.get_value(row, col) == '.':
+                        board.grid[row][col] = "w"
+
+
+        elif n_action_args == 3:
+
+            row, col, third = action
+
+            if third == "Water around boat1":
+
+                board.water_around_boat1(row, col)
+
+            """grid_copy[row][col] = ship_type
+
+            if ship_type != 'w':                #ROW_counts e COL_counts é o nº de navios que faltam colocar na linha/coluna
+                ROW_counts_copy[row] -= 1
+                COL_counts_copy[col] -= 1"""
 
         new_board = Board(grid_copy, ROW_counts_copy, COL_counts_copy)
         new_state = BimaruState(new_board)
+
+        new_board.print()
+        print("\n")
 
         return new_state
 
@@ -293,8 +408,15 @@ class Bimaru(Problem):
         for row in state.board.grid:
             for cell in row:
                 if cell == ".":
-                    return False     #se encontrar pelo menos 1 célula vazia, então ainda não acabou
-                
+                    return False     # se encontrar pelo menos 1 célula vazia, então ainda não acabou
+        
+        # No fim as águas são substituídas por células vazias para melhor visualização da grelha
+
+        for row in range(10):
+            for col in range(10):
+                if board.get_value[row][col].lower() == "w":
+                    board.grid[row][col] = "."
+
         return True
 
     def h(self, node: Node):    #nº de navios que falta serem colocados (é admissível)
