@@ -652,15 +652,14 @@ class Bimaru(Problem):
                                                 if (above == None or better_lower(above) == "." or better_lower(above) == "w") and (below == None or better_lower(below) == "." or better_lower(below) == "w"):
                                                     result.append((row, col, "right", ".", "Place boat4"))
 
-            #result.append("nig")
-            #print(state.board.remaining_boats[0])
-        # Se o boat4 estiver posto, mete os boat3
+            print("I entered place boat4")
+            # Se o boat4 estiver posto, mete os boat3
 
         else:
             if state.board.remaining_boats[1] > 0:
 
                 # Meter boat3 vertical
-                print("nig")
+                
                 for col in range(10):
                     if state.board.COL_counts[col] >= 2:        # meter barco se já lá estiver um top, middle ou bottom
                         for row in range(10):
@@ -768,7 +767,8 @@ class Bimaru(Problem):
                                                 if (above == None or better_lower(above) == "." or better_lower(above) == "w") and (below == None or better_lower(below) == "." or better_lower(below) == "w"):
                                                     result.append((row, col, "right", ".", "Place boat3"))          
 
-            # Se os boat3 estiverem postos, mete os boat2
+                print("I entered place boat3")
+                # Se os boat3 estiverem postos, mete os boat2
 
             else:
                 if state.board.remaining_boats[2] > 0:
@@ -847,7 +847,8 @@ class Bimaru(Problem):
                                                 if (above == None or better_lower(above) == "." or better_lower(above) == "w") and (below == None or better_lower(below) == "." or better_lower(below) == "w"):
                                                     result.append((row, col, "right", ".", "Place boat2"))
 
-                # Se os boat2 estiverem postos, mete os boat1
+                    print("I entered place boat2")
+                    # Se os boat2 estiverem postos, mete os boat1
 
                 else:
                     if state.board.remaining_boats[3] > 0:
@@ -861,6 +862,8 @@ class Bimaru(Problem):
                                             if (above == None or better_lower(above) == "." or better_lower(above) == "w") and (below == None or better_lower(below) == "." or better_lower(below) == "w") and (left == None or better_lower(left) == "." or better_lower(left) == "w") and (right == None or better_lower(right) == "." or better_lower(right) == "w"):
                                                     result.append((row, col, "Place boat1"))
 
+                        print("I entered place boat1")
+
         print(result)
         return result
 
@@ -870,12 +873,12 @@ class Bimaru(Problem):
         das presentes na lista obtida pela execução de
         self.actions(state)."""
 
-        #new_state = copy.deepcopy(state)
-        grid_copy = state.board.grid.copy()
-        ROW_counts_copy = state.board.ROW_counts.copy()
-        COL_counts_copy = state.board.COL_counts.copy()
-        remaining_boats_copy = state.board.remaining_boats.copy()
-        new_board = Board(grid_copy, ROW_counts_copy, COL_counts_copy, remaining_boats_copy)
+        new_state = copy.deepcopy(state)
+        #grid_copy = state.board.grid.copy()
+        #ROW_counts_copy = state.board.ROW_counts.copy()
+        #COL_counts_copy = state.board.COL_counts.copy()
+        #remaining_boats_copy = state.board.remaining_boats.copy()
+        new_board = new_state.board
 
         print(action)
         n_action_args = len(action)
@@ -1179,9 +1182,7 @@ class Bimaru(Problem):
 
                 new_board.remaining_boats[3] -= 1
 
-        new_state = BimaruState(new_board)
-
-        print(new_state.board.remaining_boats[0])
+        #new_state = BimaruState(new_board)
         new_board.print()
 
         return new_state
