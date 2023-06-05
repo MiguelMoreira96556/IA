@@ -173,6 +173,112 @@ class Board:
         
         return True
 
+    def is_valid(self, value):
+
+        return value == None or better_lower(value) == "." or better_lower(value) == "w"
+
+    def is_valid_boat4_place(self, row: int, col: int, beginning):
+        
+        if better_lower(beginning) == "t":
+            # check if sides are valid
+            left, right = self.adjacent_horizontal_values(row+1, col)
+            if self.is_valid(left) and self.is_valid(right):
+                left, right = self.adjacent_horizontal_values(row+2, col)
+                if self.is_valid(left) and self.is_valid(right):
+                    left, right = self.adjacent_horizontal_values(row+3, col)
+                    if self.is_valid(left) and self.is_valid(right):
+                        # check if extremities are ok
+                        above, below = self.adjacent_vertical_values(row, col)
+                        upper_left, upper_right, lower_left, lower_right = self.adjacent_diagonal_values(row, col)
+                        if self.is_valid(above) and self.is_valid(upper_left) and self.is_valid(upper_right):
+                            above, below = self.adjacent_vertical_values(row+3, col)
+                            upper_left, upper_right, lower_left, lower_right = self.adjacent_diagonal_values(row+3, col)
+                            if self.is_valid(below) and self.is_valid(lower_left) and self.is_valid(lower_right):
+                                return True
+                                
+        elif better_lower(beginning) == "l":
+            # check if sides are valid
+            above, below = self.adjacent_vertical_values(row, col+1)
+            if self.is_valid(above) and self.is_valid(below):
+                above, below = self.adjacent_vertical_values(row, col+2)
+                if self.is_valid(above) and self.is_valid(below):
+                    above, below = self.adjacent_vertical_values(row, col+3)
+                    if self.is_valid(above) and self.is_valid(below):
+                        # check if extremities are ok
+                        left, right = self.adjacent_horizontal_values(row, col)
+                        upper_left, upper_right, lower_left, lower_right = self.adjacent_diagonal_values(row, col)
+                        if self.is_valid(left) and self.is_valid(upper_left) and self.is_valid(lower_left):
+                            left, right = self.adjacent_horizontal_values(row, col+3)
+                            upper_left, upper_right, lower_left, lower_right = self.adjacent_diagonal_values(row, col+3)
+                            if self.is_valid(right) and self.is_valid(upper_right) and self.is_valid(lower_right):
+                                return True
+                
+        return False
+
+    def is_valid_boat3_place(self, row: int, col: int, beginning):
+        
+        if better_lower(beginning) == "t":
+            # check if sides are valid
+            left, right = self.adjacent_horizontal_values(row+1, col)
+            if self.is_valid(left) and self.is_valid(right):
+                left, right = self.adjacent_horizontal_values(row+2, col)
+                if self.is_valid(left) and self.is_valid(right):
+                    # check if extremities are ok
+                    above, below = self.adjacent_vertical_values(row, col)
+                    upper_left, upper_right, lower_left, lower_right = self.adjacent_diagonal_values(row, col)
+                    if self.is_valid(above) and self.is_valid(upper_left) and self.is_valid(upper_right):
+                        above, below = self.adjacent_vertical_values(row+2, col)
+                        upper_left, upper_right, lower_left, lower_right = self.adjacent_diagonal_values(row+2, col)
+                        if self.is_valid(below) and self.is_valid(lower_left) and self.is_valid(lower_right):
+                            return True
+                                
+        elif better_lower(beginning) == "l":
+            # check if sides are valid
+            above, below = self.adjacent_vertical_values(row, col+1)
+            if self.is_valid(above) and self.is_valid(below):
+                above, below = self.adjacent_vertical_values(row, col+2)
+                if self.is_valid(above) and self.is_valid(below):
+                    # check if extremities are ok
+                    left, right = self.adjacent_horizontal_values(row, col)
+                    upper_left, upper_right, lower_left, lower_right = self.adjacent_diagonal_values(row, col)
+                    if self.is_valid(left) and self.is_valid(upper_left) and self.is_valid(lower_left):
+                        left, right = self.adjacent_horizontal_values(row, col+2)
+                        upper_left, upper_right, lower_left, lower_right = self.adjacent_diagonal_values(row, col+2)
+                        if self.is_valid(right) and self.is_valid(upper_right) and self.is_valid(lower_right):
+                            return True
+                
+        return False
+
+    def is_valid_boat2_place(self, row: int, col: int, beginning):
+        
+        if better_lower(beginning) == "t":
+            # check if sides are valid
+            left, right = self.adjacent_horizontal_values(row+1, col)
+            if self.is_valid(left) and self.is_valid(right):
+                # check if extremities are ok
+                above, below = self.adjacent_vertical_values(row, col)
+                upper_left, upper_right, lower_left, lower_right = self.adjacent_diagonal_values(row, col)
+                if self.is_valid(above) and self.is_valid(upper_left) and self.is_valid(upper_right):
+                    above, below = self.adjacent_vertical_values(row+1, col)
+                    upper_left, upper_right, lower_left, lower_right = self.adjacent_diagonal_values(row+1, col)
+                    if self.is_valid(below) and self.is_valid(lower_left) and self.is_valid(lower_right):
+                        return True
+                                
+        elif better_lower(beginning) == "l":
+            # check if sides are valid
+            above, below = self.adjacent_vertical_values(row, col+1)
+            if self.is_valid(above) and self.is_valid(below):
+                # check if extremities are ok
+                left, right = self.adjacent_horizontal_values(row, col)
+                upper_left, upper_right, lower_left, lower_right = self.adjacent_diagonal_values(row, col)
+                if self.is_valid(left) and self.is_valid(upper_left) and self.is_valid(lower_left):
+                    left, right = self.adjacent_horizontal_values(row, col+1)
+                    upper_left, upper_right, lower_left, lower_right = self.adjacent_diagonal_values(row, col+1)
+                    if self.is_valid(right) and self.is_valid(upper_right) and self.is_valid(lower_right):
+                        return True
+                
+        return False
+
     def water_adjacent_vertical(self, row: int, col: int):
 
         if row == 0:
@@ -208,42 +314,62 @@ class Board:
     def water_adjacent_diagonal(self, row: int, col: int):
 
         if self.is_upper_left(row, col):
-            self.grid[row+1][col+1] = "w"
+            if self.grid[row+1][col+1] == ".":
+                self.grid[row+1][col+1] = "w"
         
         elif self.is_upper_right(row, col):
-            self.grid[row+1][col-1] = "w"
+            if self.grid[row+1][col-1] == ".":
+                self.grid[row+1][col-1] = "w"
         
         elif self.is_lower_left(row, col):
-            self.grid[row-1][col+1] = "w"
+            if self.grid[row-1][col+1] == ".":
+                self.grid[row-1][col+1] = "w"
         
         elif self.is_lower_right(row, col):
-            self.grid[row-1][col-1] = "w"
+            if self.grid[row-1][col-1] == ".":
+                self.grid[row-1][col-1] = "w"
         
         elif self.is_upper_middle(row, col):
-            self.grid[row+1][col-1] = "w"
-            self.grid[row+1][col+1] = "w"
+            if self.grid[row+1][col-1] == ".":
+                self.grid[row+1][col-1] = "w"
+            if self.grid[row+1][col+1] == ".":
+                self.grid[row+1][col+1] = "w"
         
         elif self.is_lower_middle(row, col):
-            self.grid[row-1][col-1] = "w"
-            self.grid[row-1][col+1] = "w"
+            if self.grid[row-1][col-1] == ".":
+                self.grid[row-1][col-1] = "w"
+            if self.grid[row-1][col+1] == ".":
+                self.grid[row-1][col+1] = "w"
         
         elif self.is_left_middle(row, col):
-            self.grid[row-1][col+1] = "w"
-            self.grid[row+1][col+1] = "w"
+            if self.grid[row-1][col+1] == ".":
+                self.grid[row-1][col+1] = "w"
+            if self.grid[row+1][col+1] == ".":
+                self.grid[row+1][col+1] = "w"
         
         elif self.is_right_middle(row, col):
-            self.grid[row-1][col-1] = "w"
-            self.grid[row+1][col-1] = "w"
+            if self.grid[row-1][col-1] == ".":
+                self.grid[row-1][col-1] = "w"
+            if self.grid[row+1][col-1] == ".":
+                self.grid[row+1][col-1] = "w"
         
         else:
-            self.grid[row-1][col-1] = "w"
-            self.grid[row-1][col+1] = "w"
-            self.grid[row+1][col-1] = "w"
-            self.grid[row+1][col+1] = "w"
+            if self.grid[row-1][col-1] == ".":
+                self.grid[row-1][col-1] = "w"
+            if self.grid[row-1][col+1] == ".":
+                self.grid[row-1][col+1] = "w"
+            if self.grid[row+1][col-1] == ".":
+                self.grid[row+1][col-1] = "w"
+            if self.grid[row+1][col+1] == ".":
+                self.grid[row+1][col+1] = "w"
 
     def water_around_boat1(self, row: int, col: int):
 
-        if self.is_upper_left(row, col):
+        self.water_adjacent_horizontal(row, col)
+        self.water_adjacent_vertical(row, col)
+        self.water_adjacent_diagonal(row, col)
+
+        """if self.is_upper_left(row, col):
             self.grid[row+1][col] = "w"
             self.grid[row][col+1] = "w"
             self.grid[row+1][col+1] = "w"
@@ -299,7 +425,7 @@ class Board:
             self.grid[row][col+1] = "w"
             self.grid[row+1][col-1] = "w"
             self.grid[row+1][col] = "w"
-            self.grid[row+1][col+1] = "w"
+            self.grid[row+1][col+1] = "w"""
 
     def water_around_boat2(self, row: int, col: int, beginning):
 
@@ -388,7 +514,7 @@ class Board:
             if ship_type != "W":
                 ROW_counts[row] -= 1
                 COL_counts[col] -= 1
-
+        
         # Nº de boat1 já postos
 
         boat1_counter = 0
@@ -397,18 +523,34 @@ class Board:
                 if grid[row][col] == "C":
                     boat1_counter += 1
 
-        # Nº de boat2 já postos (improvável mas pronto, não vale a pena fazer para boat3, boat4)
+        # Nº de boat2 já postos
 
         boat2_counter = 0
         for row in range(10):
             for col in range(10):
-                if (grid[row][col] == "T" and grid[row][col] == "B") or (grid[row][col] == "L" and grid[row][col] == "R"):
+                if (grid[row][col] == "T" and grid[row+1][col] == "B") or (grid[row][col] == "L" and grid[row][col+1] == "R"):
                     boat2_counter += 1
+
+        # Nº de boat3 já postos
+
+        boat3_counter = 0
+        for row in range(10):
+            for col in range(10):
+                if (grid[row][col] == "T" and grid[row+1][col] == "M" and grid[row+2][col] == "B") or (grid[row][col] == "L" and grid[row][col+1] == "M" and grid[row][col+2] == "R"):
+                    boat3_counter += 1
+
+        # Nº de boat4 já postos
+
+        boat4_counter = 0
+        for row in range(10):
+            for col in range(10):
+                if (grid[row][col] == "T" and grid[row+1][col] == "M" and grid[row+2][col] == "M" and grid[row+3][col] == "B") or (grid[row][col] == "L" and grid[row][col+1] == "M" and grid[row][col+2] == "M" and grid[row][col+3] == "R"):
+                    boat4_counter += 1
 
 
         remaining_boats = []
-        remaining_boats.append(1)                      # Boat4
-        remaining_boats.append(2)                      # Boat3
+        remaining_boats.append(1-boat4_counter)        # Boat4
+        remaining_boats.append(2-boat3_counter)        # Boat3
         remaining_boats.append(3-boat2_counter)        # Boat2
         remaining_boats.append(4-boat1_counter)        # Boat1
         board = Board(grid, ROW_counts, COL_counts, remaining_boats)
@@ -427,12 +569,15 @@ class Board:
                     if not board.is_water_around_boat1(row, col):
                         board.water_around_boat1(row, col)
 
+        #board.print2()
+        #print("\n")
         return board
 
-    def print(self):
+    def print2(self):
         for row in range(10):
             for col in range(10):
                 stdout.write(self.grid[row][col])
+                #stdout.write(" ")
             stdout.write("\n")
 
 
@@ -462,79 +607,54 @@ class Bimaru(Problem):
                     for row in range(10):
                         if better_lower(state.board.get_value(row, col)) == "t":
                             if row <= 6:
-                                if state.board.ROW_counts[row+1] != 0 and state.board.ROW_counts[row+2] != 0 and state.board.ROW_counts[row+3] != 0:          
+                                if state.board.ROW_counts[row+1] != 0 and state.board.ROW_counts[row+2] != 0 and state.board.ROW_counts[row+3] != 0:
+                                    # check if there is space
                                     if state.board.get_value(row+1, col) == "." and state.board.get_value(row+2, col) == "." and state.board.get_value(row+3, col) == ".":
-                                        left, right = state.board.adjacent_horizontal_values(row+1, col)
-                                        if (left == None or better_lower(left) == "." or better_lower(left) == "w") and (right == None or better_lower(right) == "." or better_lower(right) == "w"):
-                                            left, right = state.board.adjacent_horizontal_values(row+2, col)
-                                            if (left == None or better_lower(left) == "." or better_lower(left) == "w") and (right == None or better_lower(right) == "." or better_lower(right) == "w"):
-                                                left, right = state.board.adjacent_horizontal_values(row+3, col)
-                                                if (left == None or better_lower(left) == "." or better_lower(left) == "w") and (right == None or better_lower(right) == "." or better_lower(right) == "w"):
-                                                    result.append((row, col, "down", "t", "Place boat4"))
+                                        if state.board.is_valid_boat4_place(row, col, "t"):
+                                            result.append((row, col, "down", "t", "Place boat4"))
                                                     
 
                         if better_lower(state.board.get_value(row, col)) == "b":
                             if row >= 3:
                                 if state.board.ROW_counts[row-1] != 0 and state.board.ROW_counts[row-2] != 0 and state.board.ROW_counts[row-3] != 0:
+                                    # check if there is space
                                     if state.board.get_value(row-1, col) == "." and state.board.get_value(row-2, col) == "." and state.board.get_value(row-3, col) == ".":
-                                        left, right = state.board.adjacent_horizontal_values(row-1, col)
-                                        if (left == None or better_lower(left) == "." or better_lower(left) == "w") and (right == None or better_lower(right) == "." or better_lower(right) == "w"):
-                                            left, right = state.board.adjacent_horizontal_values(row-2, col)
-                                            if (left == None or better_lower(left) == "." or better_lower(left) == "w") and (right == None or better_lower(right) == "." or better_lower(right) == "w"):
-                                                left, right = state.board.adjacent_horizontal_values(row-3, col)
-                                                if (left == None or better_lower(left) == "." or better_lower(left) == "w") and (right == None or better_lower(right) == "." or better_lower(right) == "w"):
-                                                    result.append((row, col, "up", "b", "Place boat4"))
+                                        if state.board.is_valid_boat4_place(row-3, col, "t"):
+                                            result.append((row, col, "up", "b", "Place boat4"))
                                                     
 
                         if better_lower(state.board.get_value(row, col)) == "m":
                             if row != 0 and row != 9:
                                 if row == 1:
                                     if state.board.ROW_counts[row-1] != 0 and state.board.ROW_counts[row+1] != 0 and state.board.ROW_counts[row+2] != 0:
+                                        # check if there is space
                                         if state.board.get_value(row-1, col) == "." and state.board.get_value(row+1, col) == "." and state.board.get_value(row+2, col) == ".":
-                                            left, right = state.board.adjacent_horizontal_values(row-1, col)
-                                            if (left == None or better_lower(left) == "." or better_lower(left) == "w") and (right == None or better_lower(right) == "." or better_lower(right) == "w"):
-                                                left, right = state.board.adjacent_horizontal_values(row+1, col)
-                                                if (left == None or better_lower(left) == "." or better_lower(left) == "w") and (right == None or better_lower(right) == "." or better_lower(right) == "w"):
-                                                    left, right = state.board.adjacent_horizontal_values(row+2, col)
-                                                    if (left == None or better_lower(left) == "." or better_lower(left) == "w") and (right == None or better_lower(right) == "." or better_lower(right) == "w"):
-                                                        result.append((row, col, "down", "m", "Place boat4"))
+                                            if state.board.is_valid_boat4_place(row-1, col, "t"):
+                                                result.append((row, col, "down", "m", "Place boat4"))
                                                         
 
                                 elif row == 8:
                                     if state.board.ROW_counts[row-2] != 0 and state.board.ROW_counts[row-1] != 0 and state.board.ROW_counts[row+1] != 0:
+                                        # check if there is space
                                         if state.board.get_value(row-2, col) == "." and state.board.get_value(row-1, col) == "." and state.board.get_value(row+1, col) == ".":
-                                            left, right = state.board.adjacent_horizontal_values(row-2, col)
-                                            if (left == None or better_lower(left) == "." or better_lower(left) == "w") and (right == None or better_lower(right) == "." or better_lower(right) == "w"):
-                                                left, right = state.board.adjacent_horizontal_values(row-1, col)
-                                                if (left == None or better_lower(left) == "." or better_lower(left) == "w") and (right == None or better_lower(right) == "." or better_lower(right) == "w"):
-                                                    left, right = state.board.adjacent_horizontal_values(row+1, col)
-                                                    if (left == None or better_lower(left) == "." or better_lower(left) == "w") and (right == None or better_lower(right) == "." or better_lower(right) == "w"):
-                                                        result.append((row, col, "up", "m", "Place boat4"))
+                                            if state.board.is_valid_boat4_place(row-2, col, "t"):
+                                                result.append((row, col, "up", "m", "Place boat4"))
                                                         
 
                                 else:
                                     if state.board.ROW_counts[row-1] != 0 and state.board.ROW_counts[row+1] != 0:
-                                        if state.board.get_value(row-1, col) == "." and state.board.get_value(row+1, col) == ".":
-                                            if state.board.ROW_counts[row+2] != 0:
-                                                if state.board.get_value(row+2, col) == ".":
-                                                    left, right = state.board.adjacent_horizontal_values(row-1, col)
-                                                    if (left == None or better_lower(left) == "." or better_lower(left) == "w") and (right == None or better_lower(right) == "." or better_lower(right) == "w"):
-                                                        left, right = state.board.adjacent_horizontal_values(row+1, col)
-                                                        if (left == None or better_lower(left) == "." or better_lower(left) == "w") and (right == None or better_lower(right) == "." or better_lower(right) == "w"):
-                                                            left, right = state.board.adjacent_horizontal_values(row+2, col)
-                                                            if (left == None or better_lower(left) == "." or better_lower(left) == "w") and (right == None or better_lower(right) == "." or better_lower(right) == "w"):
-                                                                result.append((row, col, "down", "m", "Place boat4"))
+                                        if state.board.ROW_counts[row+2] != 0:
+                                            # check if there is space
+                                            if state.board.get_value(row-1, col) == "." and state.board.get_value(row+1, col) == "." and state.board.get_value(row+2, col) == ".":
+                                                if state.board.is_valid_boat4_place(row-1, col, "t"):
+                                                    result.append((row, col, "down", "m", "Place boat4"))
                                                                 
 
-                                            elif state.board.ROW_counts[row-2] != 0:
-                                                if state.board.get_value(row-2, col) == ".":
-                                                    left, right = state.board.adjacent_horizontal_values(row-2, col)
-                                                    if (left == None or better_lower(left) == "." or better_lower(left) == "w") and (right == None or better_lower(right) == "." or better_lower(right) == "w"):
-                                                        left, right = state.board.adjacent_horizontal_values(row-1, col)
-                                                        if (left == None or better_lower(left) == "." or better_lower(left) == "w") and (right == None or better_lower(right) == "." or better_lower(right) == "w"):
-                                                            left, right = state.board.adjacent_horizontal_values(row+1, col)
-                                                            if (left == None or better_lower(left) == "." or better_lower(left) == "w") and (right == None or better_lower(right) == "." or better_lower(right) == "w"):
-                                                                result.append((row, col, "up", "m", "Place boat4"))
+                                        if state.board.ROW_counts[row-2] != 0:
+                                            # check if there is space
+                                            if state.board.get_value(row-2, col) == "." and state.board.get_value(row-1, col) == "." and state.board.get_value(row+1, col) == ".":
+                                                if state.board.is_valid_boat4_place(row-2, col, "t"):
+                                                    result.append((row, col, "up", "m", "Place boat4"))
                                                                 
 
             # Meter boat4 horizontal
@@ -545,78 +665,53 @@ class Bimaru(Problem):
                         if better_lower(state.board.get_value(row, col)) == "l":
                             if col <= 6:
                                 if state.board.COL_counts[col+1] != 0 and state.board.COL_counts[col+2] != 0 and state.board.COL_counts[col+3] != 0:
+                                    # check if there is space
                                     if state.board.get_value(row, col+1) == "." and state.board.get_value(row, col+2) == "." and state.board.get_value(row, col+3) == ".":
-                                        above, below = state.board.adjacent_vertical_values(row, col+1)
-                                        if (above == None or better_lower(above) == "." or better_lower(above) == "w") and (below == None or better_lower(below) == "." or better_lower(below) == "w"):
-                                            above, below = state.board.adjacent_vertical_values(row, col+2)
-                                            if (above == None or better_lower(above) == "." or better_lower(above) == "w") and (below == None or better_lower(below) == "." or better_lower(below) == "w"):
-                                                above, below = state.board.adjacent_vertical_values(row, col+3)
-                                                if (above == None or better_lower(above) == "." or better_lower(above) == "w") and (below == None or better_lower(below) == "." or better_lower(below) == "w"):
-                                                    result.append((row, col, "right", "l", "Place boat4"))
+                                        if state.board.is_valid_boat4_place(row, col, "l"):
+                                            result.append((row, col, "right", "l", "Place boat4"))
                                                     
 
                         if better_lower(state.board.get_value(row, col)) == "r":
                             if col >= 3:
                                 if state.board.COL_counts[col-1] != 0 and state.board.COL_counts[col-2] != 0 and state.board.COL_counts[col-3] != 0:
+                                    # check if there is space
                                     if state.board.get_value(row, col-1) == "." and state.board.get_value(row, col-2) == "." and state.board.get_value(row, col-3) == ".":
-                                        above, below = state.board.adjacent_vertical_values(row, col-1)
-                                        if (above == None or better_lower(above) == "." or better_lower(above) == "w") and (below == None or better_lower(below) == "." or better_lower(below) == "w"):
-                                            above, below = state.board.adjacent_vertical_values(row, col-2)
-                                            if (above == None or better_lower(above) == "." or better_lower(above) == "w") and (below == None or better_lower(below) == "." or better_lower(below) == "w"):
-                                                above, below = state.board.adjacent_vertical_values(row, col-3)
-                                                if (above == None or better_lower(above) == "." or better_lower(above) == "w") and (below == None or better_lower(below) == "." or better_lower(below) == "w"):
-                                                    result.append((row, col, "left", "r", "Place boat4"))
+                                        if state.board.is_valid_boat4_place(row, col-3, "l"):
+                                            result.append((row, col, "left", "r", "Place boat4"))
                                                     
                 
                         if better_lower(state.board.get_value(row, col)) == "m":
                             if col != 0 and col != 9:
                                 if col == 1:
                                     if state.board.COL_counts[col-1] != 0 and state.board.COL_counts[col+1] != 0 and state.board.COL_counts[col+2] != 0:
+                                        # check if there is space
                                         if state.board.get_value(row, col-1) == "." and state.board.get_value(row, col+1) == "." and state.board.get_value(row, col+2) == ".":
-                                            above, below = state.board.adjacent_vertical_values(row, col-1)
-                                            if (above == None or better_lower(above) == "." or better_lower(above) == "w") and (below == None or better_lower(below) == "." or better_lower(below) == "w"):
-                                                above, below = state.board.adjacent_vertical_values(row, col+1)
-                                                if (above == None or better_lower(above) == "." or better_lower(above) == "w") and (below == None or better_lower(below) == "." or better_lower(below) == "w"):
-                                                    above, below = state.board.adjacent_vertical_values(row, col+2)
-                                                    if (above == None or better_lower(above) == "." or better_lower(above) == "w") and (below == None or better_lower(below) == "." or better_lower(below) == "w"):
-                                                        result.append((row, col, "right", "m", "Place boat4"))
+                                            if state.board.is_valid_boat4_place(row, col-1, "l"):
+                                                result.append((row, col, "right", "m", "Place boat4"))
                                                     
 
-                            if col == 8:
-                                if state.board.COL_counts[col-2] != 0 and state.board.COL_counts[col-1] != 0 and state.board.COL_counts[col+1] != 0:
-                                    if state.board.get_value(row, col-2) == "." and state.board.get_value(row, col-1) == "." and state.board.get_value(row, col+1) == ".":
-                                        above, below = state.board.adjacent_vertical_values(row, col-2)
-                                        if (above == None or better_lower(above) == "." or better_lower(above) == "w") and (below == None or better_lower(below) == "." or better_lower(below) == "w"):
-                                            above, below = state.board.adjacent_vertical_values(row, col-1)
-                                            if (above == None or better_lower(above) == "." or better_lower(above) == "w") and (below == None or better_lower(below) == "." or better_lower(below) == "w"):
-                                                above, below = state.board.adjacent_vertical_values(row, col+1)
-                                                if (above == None or better_lower(above) == "." or better_lower(above) == "w") and (below == None or better_lower(below) == "." or better_lower(below) == "w"):
-                                                    result.append((row, col, "left", "m", "Place boat4"))
+                                if col == 8:
+                                    if state.board.COL_counts[col-2] != 0 and state.board.COL_counts[col-1] != 0 and state.board.COL_counts[col+1] != 0:
+                                        # check if there is space
+                                        if state.board.get_value(row, col-2) == "." and state.board.get_value(row, col-1) == "." and state.board.get_value(row, col+1) == ".":
+                                            if state.board.is_valid_boat4_place(row, col-2, "l"):
+                                                result.append((row, col, "left", "m", "Place boat4"))
                                                     
 
-                            else:
-                                if state.board.COL_counts[col-1] != 0 and state.board.COL_counts[col+1] != 0:
-                                    if state.board.get_value(row, col-1) == "." and state.board.get_value(row, col+1) == ".":
+                                else:
+                                    if state.board.COL_counts[col-1] != 0 and state.board.COL_counts[col+1] != 0:
                                         if state.board.COL_counts[col+2] != 0:
-                                            if state.board.get_value(row, col+2) == ".":
-                                                above, below = state.board.adjacent_vertical_values(row, col-1)
-                                                if (above == None or better_lower(above) == "." or better_lower(above) == "w") and (below == None or better_lower(below) == "." or better_lower(below) == "w"):
-                                                    above, below = state.board.adjacent_vertical_values(row, col+1)
-                                                    if (above == None or better_lower(above) == "." or better_lower(above) == "w") and (below == None or better_lower(below) == "." or better_lower(below) == "w"):
-                                                        above, below = state.board.adjacent_vertical_values(row, col+2)
-                                                        if (above == None or better_lower(above) == "." or better_lower(above) == "w") and (below == None or better_lower(below) == "." or better_lower(below) == "w"):
-                                                            result.append((row, col, "right", "m", "Place boat4"))
+                                            # check if there is space
+                                            if state.board.get_value(row, col-1) == "." and state.board.get_value(row, col+1) == "." and state.board.get_value(row, col+2) == ".":
+                                                if state.board.is_valid_boat4_place(row, col-1, "l"):
+                                                    result.append((row, col, "right", "m", "Place boat4"))
                                                             
 
-                                        elif state.board.COL_counts[col-2] != 0:
-                                            if state.board.get_value(row, col-2) == ".":
-                                                above, below = state.board.adjacent_vertical_values(row, col-2)
-                                                if (above == None or better_lower(above) == "." or better_lower(above) == "w") and (below == None or better_lower(below) == "." or better_lower(below) == "w"):
-                                                    above, below = state.board.adjacent_vertical_values(row, col-1)
-                                                    if (above == None or better_lower(above) == "." or better_lower(above) == "w") and (below == None or better_lower(below) == "." or better_lower(below) == "w"):
-                                                        above, below = state.board.adjacent_vertical_values(row, col+1)
-                                                        if (above == None or better_lower(above) == "." or better_lower(above) == "w") and (below == None or better_lower(below) == "." or better_lower(below) == "w"):
-                                                            result.append((row, col, "left", "m", "Place boat4"))
+                                        if state.board.COL_counts[col-2] != 0:
+                                            # check if there is space
+                                            if state.board.get_value(row, col-2) == "." and state.board.get_value(row, col-1) == "." and state.board.get_value(row, col+1) == ".":
+                                                if state.board.is_valid_boat4_place(row, col-2, "l"):
+                                                    result.append((row, col, "left", "m", "Place boat4"))
                                                             
             # Meter boat4 vertical
 
@@ -625,18 +720,13 @@ class Bimaru(Problem):
                     for row in range(10):
                         if row <= 6:
                             if state.board.ROW_counts[row] != 0 and state.board.ROW_counts[row+1] != 0 and state.board.ROW_counts[row+2] != 0 and state.board.ROW_counts[row+3] != 0:
-                                if state.board.get_value(row, col) == "." and state.board.get_value(row+1, col) == "." and state.board.get_value(row+2, col) == "." and state.board.get_value(row+3, col) == ".":     # percorre todas as linhas por isso eventualmente a condição vai ser satisfeita, se for possível (é tratado como um top)
+                                # check if there is space
+                                if state.board.get_value(row, col) == "." and state.board.get_value(row+1, col) == "." and state.board.get_value(row+2, col) == "." and state.board.get_value(row+3, col) == ".":
                                     left, right = state.board.adjacent_horizontal_values(row, col)
-                                    if (left == None or better_lower(left) == "." or better_lower(left) == "w") and (right == None or better_lower(right) == "." or better_lower(right) == "w"):
-                                        left, right = state.board.adjacent_horizontal_values(row+1, col)
-                                        if (left == None or better_lower(left) == "." or better_lower(left) == "w") and (right == None or better_lower(right) == "." or better_lower(right) == "w"):
-                                            left, right = state.board.adjacent_horizontal_values(row+2, col)
-                                            if (left == None or better_lower(left) == "." or better_lower(left) == "w") and (right == None or better_lower(right) == "." or better_lower(right) == "w"):
-                                                left, right = state.board.adjacent_horizontal_values(row+3, col)
-                                                if (left == None or better_lower(left) == "." or better_lower(left) == "w") and (right == None or better_lower(right) == "." or better_lower(right) == "w"):
-                                                    result.append((row, col, "down", ".", "Place boat4"))
+                                    if state.board.is_valid(left) and state.board.is_valid(right):
+                                        if state.board.is_valid_boat4_place(row, col, "t"):
+                                            result.append((row, col, "down", ".", "Place boat4"))
                                                     
-
             # Meter boat4 horizontal
 
             for row in range(10):
@@ -644,16 +734,12 @@ class Bimaru(Problem):
                     for col in range(10):
                         if col <= 6:
                             if state.board.COL_counts[col] != 0 and state.board.COL_counts[col+1] != 0 and state.board.COL_counts[col+2] != 0 and state.board.COL_counts[col+3] != 0:
-                                if state.board.get_value(row, col) == "." and state.board.get_value(row, col+1) == "." and state.board.get_value(row, col+2) == "." and state.board.get_value(row, col+3) == ".":     # percorre todas as colunas por isso eventualmente a condição vai ser satisfeita, se for possível (é tratado como um left)
+                                # check if there is space
+                                if state.board.get_value(row, col) == "." and state.board.get_value(row, col+1) == "." and state.board.get_value(row, col+2) == "." and state.board.get_value(row, col+3) == ".":
                                     above, below = state.board.adjacent_vertical_values(row, col)
-                                    if (above == None or better_lower(above) == "." or better_lower(above) == "w") and (below == None or better_lower(below) == "." or better_lower(below) == "w"):
-                                        above, below = state.board.adjacent_vertical_values(row, col+1)
-                                        if (above == None or better_lower(above) == "." or better_lower(above) == "w") and (below == None or better_lower(below) == "." or better_lower(below) == "w"):
-                                            above, below = state.board.adjacent_vertical_values(row, col+2)
-                                            if (above == None or better_lower(above) == "." or better_lower(above) == "w") and (below == None or better_lower(below) == "." or better_lower(below) == "w"):
-                                                above, below = state.board.adjacent_vertical_values(row, col+3)
-                                                if (above == None or better_lower(above) == "." or better_lower(above) == "w") and (below == None or better_lower(below) == "." or better_lower(below) == "w"):
-                                                    result.append((row, col, "right", ".", "Place boat4"))
+                                    if state.board.is_valid(above) and state.board.is_valid(below):
+                                        if state.board.is_valid_boat4_place(row, col, "l"):
+                                            result.append((row, col, "right", ".", "Place boat4"))
 
             # Se o boat4 estiver posto, mete os boat3
 
@@ -668,34 +754,28 @@ class Bimaru(Problem):
                             if better_lower(state.board.get_value(row, col)) == "t":
                                 if row <= 7:
                                     if state.board.ROW_counts[row+1] != 0 and state.board.ROW_counts[row+2] != 0:
+                                        # check if there is space
                                         if state.board.get_value(row+1, col) == "." and state.board.get_value(row+2, col) == ".":
-                                            left, right = state.board.adjacent_horizontal_values(row+1, col)
-                                            if (left == None or better_lower(left) == "." or better_lower(left) == "w") and (right == None or better_lower(right) == "." or better_lower(right) == "w"):
-                                                left, right = state.board.adjacent_horizontal_values(row+2, col)
-                                                if (left == None or better_lower(left) == "." or better_lower(left) == "w") and (right == None or better_lower(right) == "." or better_lower(right) == "w"):
-                                                    result.append((row, col, "down", "t", "Place boat3"))
+                                            if state.board.is_valid_boat3_place(row, col, "t"):
+                                                result.append((row, col, "down", "t", "Place boat3"))
                                                     
 
                             if better_lower(state.board.get_value(row, col)) == "b":
                                 if row >= 2:
                                     if state.board.ROW_counts[row-1] != 0 and state.board.ROW_counts[row-2] != 0:
+                                        # check if there is space
                                         if state.board.get_value(row-1, col) == "." and state.board.get_value(row-2, col) == ".":
-                                            left, right = state.board.adjacent_horizontal_values(row-1, col)
-                                            if (left == None or better_lower(left) == "." or better_lower(left) == "w") and (right == None or better_lower(right) == "." or better_lower(right) == "w"):
-                                                left, right = state.board.adjacent_horizontal_values(row-2, col)
-                                                if (left == None or better_lower(left) == "." or better_lower(left) == "w") and (right == None or better_lower(right) == "." or better_lower(right) == "w"):
-                                                    result.append((row, col, "up", "b", "Place boat3"))
+                                            if state.board.is_valid_boat3_place(row-2, col, "t"):
+                                                result.append((row, col, "up", "b", "Place boat3"))
                                                     
 
                             if better_lower(state.board.get_value(row, col)) == "m":
                                 if row != 0 and row != 9:
                                     if state.board.ROW_counts[row-1] != 0 and state.board.ROW_counts[row+1] != 0:
+                                        # check if there is space
                                         if state.board.get_value(row-1, col) == "." and state.board.get_value(row+1, col) == ".":
-                                            left, right = state.board.adjacent_horizontal_values(row-1, col)
-                                            if (left == None or better_lower(left) == "." or better_lower(left) == "w") and (right == None or better_lower(right) == "." or better_lower(right) == "w"):
-                                                left, right = state.board.adjacent_horizontal_values(row+1, col)
-                                                if (left == None or better_lower(left) == "." or better_lower(left) == "w") and (right == None or better_lower(right) == "." or better_lower(right) == "w"):
-                                                    result.append((row, col, "vertical", "m", "Place boat3"))
+                                            if state.board.is_valid_boat3_place(row-1, col, "t"):
+                                                result.append((row, col, "vertical", "m", "Place boat3"))
                                                     
 
                 # Meter boat3 horizontal
@@ -706,34 +786,28 @@ class Bimaru(Problem):
                             if better_lower(state.board.get_value(row, col)) == "l":
                                 if col <= 7:
                                     if state.board.COL_counts[col+1] != 0 and state.board.COL_counts[col+2] != 0:
+                                        # check if there is space
                                         if state.board.get_value(row, col+1) == "." and state.board.get_value(row, col+2) == ".":
-                                            above, below = state.board.adjacent_vertical_values(row, col+1)
-                                            if (above == None or better_lower(above) == "." or better_lower(above) == "w") and (below == None or better_lower(below) == "." or better_lower(below) == "w"):
-                                                above, below = state.board.adjacent_vertical_values(row, col+2)
-                                                if (above == None or better_lower(above) == "." or better_lower(above) == "w") and (below == None or better_lower(below) == "." or better_lower(below) == "w"):
-                                                    result.append((row, col, "right", "l", "Place boat3"))
+                                            if state.board.is_valid_boat3_place(row, col, "l"):
+                                                result.append((row, col, "right", "l", "Place boat3"))
                                                     
 
                             if better_lower(state.board.get_value(row, col)) == "r":
                                 if col >= 2:
                                     if state.board.COL_counts[col-1] != 0 and state.board.COL_counts[col-2] != 0:
+                                        # check if there is space
                                         if state.board.get_value(row, col-1) == "." and state.board.get_value(row, col-2) == ".":
-                                            above, below = state.board.adjacent_vertical_values(row, col-1)
-                                            if (above == None or better_lower(above) == "." or better_lower(above) == "w") and (below == None or better_lower(below) == "." or better_lower(below) == "w"):
-                                                above, below = state.board.adjacent_vertical_values(row, col-2)
-                                                if (above == None or better_lower(above) == "." or better_lower(above) == "w") and (below == None or better_lower(below) == "." or better_lower(below) == "w"):
-                                                    result.append((row, col, "left", "r", "Place boat3"))
+                                            if state.board.is_valid_boat3_place(row, col-2, "l"):
+                                                result.append((row, col, "left", "r", "Place boat3"))
                                                     
 
                             if better_lower(state.board.get_value(row, col)) == "m":
                                 if col != 0 and col != 9:
                                     if state.board.COL_counts[col-1] != 0 and state.board.COL_counts[col+1] != 0:
+                                        # check if there is space
                                         if state.board.get_value(row, col-1) == "." and state.board.get_value(row, col+1) == ".":
-                                            above, below = state.board.adjacent_vertical_values(row, col-1)
-                                            if (above == None or better_lower(above) == "." or better_lower(above) == "w") and (below == None or better_lower(below) == "." or better_lower(below) == "w"):
-                                                above, below = state.board.adjacent_vertical_values(row, col+1)
-                                                if (above == None or better_lower(above) == "." or better_lower(above) == "w") and (below == None or better_lower(below) == "." or better_lower(below) == "w"):
-                                                    result.append((row, col, "horizontal", "m", "Place boat3"))
+                                            if state.board.is_valid_boat3_place(row, col-1, "l"):
+                                                result.append((row, col, "horizontal", "m", "Place boat3"))
 
                                 
                 # Meter boat3 vertical
@@ -743,14 +817,12 @@ class Bimaru(Problem):
                         for row in range(10):
                             if row <= 7:
                                 if state.board.ROW_counts[row] != 0 and state.board.ROW_counts[row+1] != 0 and state.board.ROW_counts[row+2] != 0:
-                                    if state.board.get_value(row, col) == "." and state.board.get_value(row+1, col) == "." and state.board.get_value(row+2, col) == ".":     # percorre todas as linhas por isso eventualmente a condição vai ser satisfeita, se for possível (é tratado como um top)
+                                    # check if there is space
+                                    if state.board.get_value(row, col) == "." and state.board.get_value(row+1, col) == "." and state.board.get_value(row+2, col) == ".":
                                         left, right = state.board.adjacent_horizontal_values(row, col)
-                                        if (left == None or better_lower(left) == "." or better_lower(left) == "w") and (right == None or better_lower(right) == "." or better_lower(right) == "w"):
-                                            left, right = state.board.adjacent_horizontal_values(row+1, col)
-                                            if (left == None or better_lower(left) == "." or better_lower(left) == "w") and (right == None or better_lower(right) == "." or better_lower(right) == "w"):
-                                                left, right = state.board.adjacent_horizontal_values(row+2, col)
-                                                if (left == None or better_lower(left) == "." or better_lower(left) == "w") and (right == None or better_lower(right) == "." or better_lower(right) == "w"):
-                                                    result.append((row, col, "down", ".", "Place boat3"))
+                                        if state.board.is_valid(left) and state.board.is_valid(right):
+                                            if state.board.is_valid_boat3_place(row, col, "t"):
+                                                result.append((row, col, "down", ".", "Place boat3"))
                                                                 
                                                             
                 # Meter boat3 horizontal
@@ -760,14 +832,12 @@ class Bimaru(Problem):
                         for col in range(10):
                             if col <= 7:
                                 if state.board.COL_counts[col] != 0 and state.board.COL_counts[col+1] != 0 and state.board.COL_counts[col+2] != 0:
-                                    if state.board.get_value(row, col) == "." and state.board.get_value(row, col+1) == "." and state.board.get_value(row, col+2) == ".":     # percorre todas as colunas por isso eventualmente a condição vai ser satisfeita, se for possível (é tratado como um left)
+                                    # check if there is space
+                                    if state.board.get_value(row, col) == "." and state.board.get_value(row, col+1) == "." and state.board.get_value(row, col+2) == ".":
                                         above, below = state.board.adjacent_vertical_values(row, col)
-                                        if (above == None or better_lower(above) == "." or better_lower(above) == "w") and (below == None or better_lower(below) == "." or better_lower(below) == "w"):
-                                            above, below = state.board.adjacent_vertical_values(row, col+1)
-                                            if (above == None or better_lower(above) == "." or better_lower(above) == "w") and (below == None or better_lower(below) == "." or better_lower(below) == "w"):
-                                                above, below = state.board.adjacent_vertical_values(row, col+2)
-                                                if (above == None or better_lower(above) == "." or better_lower(above) == "w") and (below == None or better_lower(below) == "." or better_lower(below) == "w"):
-                                                    result.append((row, col, "right", ".", "Place boat3"))          
+                                        if state.board.is_valid(above) and state.board.is_valid(below):
+                                            if state.board.is_valid_boat3_place(row, col, "l"):
+                                                result.append((row, col, "right", ".", "Place boat3"))          
 
                 # Se os boat3 estiverem postos, mete os boat2
 
@@ -782,41 +852,40 @@ class Bimaru(Problem):
                                 if better_lower(state.board.get_value(row, col)) == "t":
                                     if row <= 8:
                                         if state.board.ROW_counts[row+1] != 0:
+                                            # check if there is space
                                             if state.board.get_value(row+1, col) == ".":
-                                                left, right = state.board.adjacent_horizontal_values(row+1, col)
-                                                if (left == None or better_lower(left) == "." or better_lower(left) == "w") and (right == None or better_lower(right) == "." or better_lower(right) == "w"):
+                                                if state.board.is_valid_boat2_place(row, col, "t"):
                                                     result.append((row, col, "down", "t", "Place boat2"))
                                                     
                                                 
                                 if better_lower(state.board.get_value(row, col)) == "b":
                                     if row >= 1:
                                         if state.board.ROW_counts[row-1] != 0:
+                                            # check if there is space
                                             if state.board.get_value(row-1, col) == ".":
-                                                left, right = state.board.adjacent_horizontal_values(row-1, col)
-                                                if (left == None or better_lower(left) == "." or better_lower(left) == "w") and (right == None or better_lower(right) == "." or better_lower(right) == "w"):
+                                                if state.board.is_valid_boat2_place(row-1, col, "t"):
                                                     result.append((row, col, "up", "b", "Place boat2"))
                                                     
 
                     # Meter boat2 horizontal
-                                                
-                    for col in range(10):
+                    for row in range(10):
                         if state.board.ROW_counts[row] >= 1:        # meter barco se já lá estiver um left ou right
                             for col in range(10):
                                 if better_lower(state.board.get_value(row, col)) == "l":
                                     if col <= 8:
                                         if state.board.COL_counts[col+1] != 0:
+                                            # check if there is space
                                             if state.board.get_value(row, col+1) == ".":
-                                                above, below = state.board.adjacent_vertical_values(row, col+1)
-                                                if (above == None or better_lower(above) == "." or better_lower(above) == "w") and (below == None or better_lower(below) == "." or better_lower(below) == "w"):
+                                                if state.board.is_valid_boat2_place(row, col, "l"):
                                                     result.append((row, col, "right", "l", "Place boat2"))
                                                     
                                                 
                                 if better_lower(state.board.get_value(row, col)) == "r":
                                     if col >= 1:
                                         if state.board.COL_counts[col-1] != 0:
+                                            # check if there is space
                                             if state.board.get_value(row, col-1) == ".":
-                                                above, below = state.board.adjacent_vertical_values(row, col-1)
-                                                if (above == None or better_lower(above) == "." or better_lower(above) == "w") and (below == None or better_lower(below) == "." or better_lower(below) == "w"):
+                                                if state.board.is_valid_boat2_place(row, col-1, "l"):
                                                     result.append((row, col, "left", "r", "Place boat2"))
                                                 
                     # Meter boat2 vertical
@@ -826,11 +895,11 @@ class Bimaru(Problem):
                             for row in range(10):
                                 if row <= 8:
                                     if state.board.ROW_counts[row] != 0 and state.board.ROW_counts[row+1] != 0:
-                                        if state.board.get_value(row, col) == "." and state.board.get_value(row+1, col) == ".":     # percorre todas as linhas por isso eventualmente a condição vai ser satisfeita, se for possível (é tratado como um top)
+                                        # check if there is space
+                                        if state.board.get_value(row, col) == "." and state.board.get_value(row+1, col) == ".":
                                             left, right = state.board.adjacent_horizontal_values(row, col)
-                                            if (left == None or better_lower(left) == "." or better_lower(left) == "w") and (right == None or better_lower(right) == "." or better_lower(right) == "w"):
-                                                left, right = state.board.adjacent_horizontal_values(row+1, col)
-                                                if (left == None or better_lower(left) == "." or better_lower(left) == "w") and (right == None or better_lower(right) == "." or better_lower(right) == "w"):
+                                            if state.board.is_valid(left) and state.board.is_valid(right):
+                                                if state.board.is_valid_boat2_place(row, col, "t"):
                                                     result.append((row, col, "down", ".", "Place boat2"))
                                                     
 
@@ -841,11 +910,11 @@ class Bimaru(Problem):
                             for col in range(10):
                                 if col <= 8:
                                     if state.board.COL_counts[col] != 0 and state.board.COL_counts[col+1] != 0:
-                                        if state.board.get_value(row, col) == "." and state.board.get_value(row, col+1) == ".":     # percorre todas as colunas por isso eventualmente a condição vai ser satisfeita, se for possível (é tratado como um left)
+                                        # check if there is space
+                                        if state.board.get_value(row, col) == "." and state.board.get_value(row, col+1) == ".":
                                             above, below = state.board.adjacent_vertical_values(row, col)
-                                            if (above == None or better_lower(above) == "." or better_lower(above) == "w") and (below == None or better_lower(below) == "." or better_lower(below) == "w"):
-                                                above, below = state.board.adjacent_vertical_values(row, col+1)
-                                                if (above == None or better_lower(above) == "." or better_lower(above) == "w") and (below == None or better_lower(below) == "." or better_lower(below) == "w"):
+                                            if state.board.is_valid(above) and state.board.is_valid(below):
+                                                if state.board.is_valid_boat2_place(row, col, "l"):
                                                     result.append((row, col, "right", ".", "Place boat2"))
 
                     # Se os boat2 estiverem postos, mete os boat1
@@ -859,10 +928,12 @@ class Bimaru(Problem):
                                         if state.board.get_value(row, col) == ".":
                                             above, below = state.board.adjacent_vertical_values(row, col)
                                             left, right = state.board.adjacent_horizontal_values(row, col)
-                                            if (above == None or better_lower(above) == "." or better_lower(above) == "w") and (below == None or better_lower(below) == "." or better_lower(below) == "w") and (left == None or better_lower(left) == "." or better_lower(left) == "w") and (right == None or better_lower(right) == "." or better_lower(right) == "w"):
-                                                    result.append((row, col, "Place boat1"))
+                                            upper_left, upper_right, lower_left, lower_right = state.board.adjacent_diagonal_values(row, col)
+                                            if state.board.is_valid(above) and state.board.is_valid(below) and state.board.is_valid(left) and state.board.is_valid(right) and state.board.is_valid(upper_left) and state.board.is_valid(upper_right) and state.board.is_valid(lower_left) and state.board.is_valid(lower_right):
+                                                result.append((row, col, "Place boat1"))
 
 
+        #print(result)
         return result
 
     def result(self, state: BimaruState, action):
@@ -871,12 +942,12 @@ class Bimaru(Problem):
         das presentes na lista obtida pela execução de
         self.actions(state)."""
 
-        new_state = copy.deepcopy(state)
+        #new_state = copy.deepcopy(state)
         #grid_copy = state.board.grid.copy()
         #ROW_counts_copy = state.board.ROW_counts.copy()
         #COL_counts_copy = state.board.COL_counts.copy()
         #remaining_boats_copy = state.board.remaining_boats.copy()
-        new_board = new_state.board
+        new_board = copy.deepcopy(state.board)
 
         n_action_args = len(action)
 
@@ -1179,9 +1250,9 @@ class Bimaru(Problem):
 
                 new_board.remaining_boats[3] -= 1
 
-        #new_state = BimaruState(new_board)
-        #new_board.print()
-        #print("\n")
+        new_state = BimaruState(new_board)
+        #print(new_state.state_id)
+        #new_board.print2()
 
         return new_state
 
@@ -1221,4 +1292,4 @@ if __name__ == "__main__":
     # Obter o nó solução usando a procura em profundidade:
     goal_node = depth_first_tree_search(problem)
 
-    goal_node.state.board.print()
+    goal_node.state.board.print2()
