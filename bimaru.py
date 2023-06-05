@@ -1221,6 +1221,4 @@ if __name__ == "__main__":
     # Obter o nó solução usando a procura em profundidade:
     goal_node = depth_first_tree_search(problem)
 
-    # Verificar se foi atingida a solução
-    print("Is goal?", problem.goal_test(goal_node.state))
     goal_node.state.board.print()
