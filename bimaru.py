@@ -7,6 +7,7 @@
 # 95657 Pedro Almeida
 
 import sys
+from sys import stdout
 import numpy as np
 import copy
 from search import (
@@ -384,8 +385,9 @@ class Board:
             col = int(hint_line[2])
             ship_type = hint_line[3]
             grid[row][col] = ship_type
-            ROW_counts[row] -= 1
-            COL_counts[col] -= 1
+            if ship_type != "W":
+                ROW_counts[row] -= 1
+                COL_counts[col] -= 1
 
         # Nº de boat1 já postos
 
@@ -425,12 +427,13 @@ class Board:
                     if not board.is_water_around_boat1(row, col):
                         board.water_around_boat1(row, col)
 
-        board.print()
         return board
 
     def print(self):
-        for row in self.grid:
-            print(" ".join(row))
+        for row in range(10):
+            for col in range(10):
+                stdout.write(self.grid[row][col])
+            stdout.write("\n")
 
 
 
@@ -652,7 +655,6 @@ class Bimaru(Problem):
                                                 if (above == None or better_lower(above) == "." or better_lower(above) == "w") and (below == None or better_lower(below) == "." or better_lower(below) == "w"):
                                                     result.append((row, col, "right", ".", "Place boat4"))
 
-            print("I entered place boat4")
             # Se o boat4 estiver posto, mete os boat3
 
         else:
@@ -767,7 +769,6 @@ class Bimaru(Problem):
                                                 if (above == None or better_lower(above) == "." or better_lower(above) == "w") and (below == None or better_lower(below) == "." or better_lower(below) == "w"):
                                                     result.append((row, col, "right", ".", "Place boat3"))          
 
-                print("I entered place boat3")
                 # Se os boat3 estiverem postos, mete os boat2
 
             else:
@@ -847,7 +848,6 @@ class Bimaru(Problem):
                                                 if (above == None or better_lower(above) == "." or better_lower(above) == "w") and (below == None or better_lower(below) == "." or better_lower(below) == "w"):
                                                     result.append((row, col, "right", ".", "Place boat2"))
 
-                    print("I entered place boat2")
                     # Se os boat2 estiverem postos, mete os boat1
 
                 else:
@@ -862,9 +862,7 @@ class Bimaru(Problem):
                                             if (above == None or better_lower(above) == "." or better_lower(above) == "w") and (below == None or better_lower(below) == "." or better_lower(below) == "w") and (left == None or better_lower(left) == "." or better_lower(left) == "w") and (right == None or better_lower(right) == "." or better_lower(right) == "w"):
                                                     result.append((row, col, "Place boat1"))
 
-                        print("I entered place boat1")
 
-        print(result)
         return result
 
     def result(self, state: BimaruState, action):
@@ -880,7 +878,6 @@ class Bimaru(Problem):
         #remaining_boats_copy = state.board.remaining_boats.copy()
         new_board = new_state.board
 
-        print(action)
         n_action_args = len(action)
 
         if n_action_args == 5:
@@ -1183,7 +1180,8 @@ class Bimaru(Problem):
                 new_board.remaining_boats[3] -= 1
 
         #new_state = BimaruState(new_board)
-        new_board.print()
+        #new_board.print()
+        #print("\n")
 
         return new_state
 
@@ -1192,16 +1190,15 @@ class Bimaru(Problem):
         um estado objetivo. Deve verificar se todas as posições do tabuleiro
         estão preenchidas de acordo com as regras do problema."""
         
-        for row in state.board.grid:
-            for cell in row:
-                if cell == ".":
-                    return False     # se encontrar pelo menos 1 célula vazia, então ainda não acabou
-        
+        # Se não estiverem colocados todos os barcos
+        if not(state.board.remaining_boats[0] == 0 and state.board.remaining_boats[1] == 0 and state.board.remaining_boats[2] == 0 and state.board.remaining_boats[3] == 0):
+            return False
+    
         # No fim as águas são substituídas por células vazias para melhor visualização da grelha
 
         for row in range(10):
             for col in range(10):
-                if state.board.get_value(row, col).lower() == "w":
+                if state.board.get_value(row, col) == "w":
                     state.board.grid[row][col] = "."
 
         return True
@@ -1226,4 +1223,4 @@ if __name__ == "__main__":
 
     # Verificar se foi atingida a solução
     print("Is goal?", problem.goal_test(goal_node.state))
-    print("Solution:\n", goal_node.state.board.print(), sep="")
+    goal_node.state.board.print()
